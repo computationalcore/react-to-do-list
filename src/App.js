@@ -9,6 +9,10 @@ class App extends Component {
 		this.state = { items: []};
 	}
 
+	componentWillMount() {
+		const toDoListItems = window.localStorage.getItem('toDoListItems') || '[]';
+		this.setState({ items: JSON.parse(toDoListItems) });
+	}
 
 	handleAddTask = (event) => {
 		event.preventDefault();
@@ -37,9 +41,14 @@ class App extends Component {
 			return {
 				items: filteredItems
 			}
-		});
+		}, function stateUpdateComplete() {
+			this.updateLocalStorage(this.state.items);
+		}.bind(this));
 	};
 
+	updateLocalStorage = (items) => {
+		window.localStorage.setItem('toDoListItems', JSON.stringify(items));
+	};
 
 	render() {
 		const { items = [] } = this.state;
