@@ -20,16 +20,32 @@ const defaultProps = {
 };
 
 /**
+ * This callback type is called `addTask` and is displayed as a global symbol.
+ *
+ * @callback addTask
+ * @param {Object} event - The event generate by submit the form.
+ */
+
+/**
+ * This callback type is called `updateTask` and is displayed as a global symbol.
+ *
+ * @callback updateTask
+ * @param {Object} target - The event generate by onChange.
+ * @param {Object} item - The item to be updated.
+ */
+
+/**
  * Represents the column list element.
- * @param {string} title - The title of the Column List\
- * @param {string[]} [items] - The title of the Column List
- * @param {} addTask -
- * @param {} updateTask -
+ * @param {Object} props - The props that were defined by the caller of this component.
+ * @param {string} props.title - The title of this column list.
+ * @param {string[]} [props.items] - The items of this list.
+ * @param {addTask} props.addTask - Callback executed when user submit item.
+ * @param {updateTask} props.updateTask - Callback executed when when user the done checkbox.
  * @returns {XML} Return the stateless component markup
  * @constructor
  */
 const ColumnList = ({title, items, addTask, updateTask}) => {
-	const currentItems = items.filter(_ => _.status === title);
+	const currentItems = items.filter(item => item.status === title);
 	return (
 		<div className="column-list">
 			<h3>{title}</h3>

@@ -3,17 +3,42 @@ import ColumnList from './ColumnList';
 import logo from './logo.svg';
 import './App.css';
 
+/**
+ * @description Main App component.
+ * @constructor
+ * @param {Object} props - The props that were defined by the caller of this component.
+ */
 class App extends Component {
 	constructor(props) {
 		super(props);
+
+		/**
+		 * @typedef {Object} ComponentState
+		 * @property {Object[]} items - All list items of the app.
+		 */
+
+		/** @type {ComponentState} */
 		this.state = { items: []};
 	}
 
+	/**
+	 * Lifecycle event handler called just after the App loads into the DOM.
+	 * Get any save items from the local storage and render it.
+	 */
 	componentWillMount() {
 		const toDoListItems = window.localStorage.getItem('toDoListItems') || '[]';
-		this.setState({ items: JSON.parse(toDoListItems) });
+		//Get
+		this.setState(
+			{
+				items: JSON.parse(toDoListItems)
+			}
+		);
 	}
 
+	/**
+	 * Add task to the To Do list.
+	 * @param {Object} event
+	 */
 	handleAddTask = (event) => {
 		event.preventDefault();
 		const { target = {} } = event;
@@ -32,6 +57,11 @@ class App extends Component {
 		});
 	};
 
+	/**
+	 * Update task to Done.
+	 * @param target
+	 * @param task
+	 */
 	handleUpdateTask = (target, task) => {
 		this.setState(previousState => {
 			const { items } = previousState;
@@ -46,6 +76,10 @@ class App extends Component {
 		}.bind(this));
 	};
 
+	/**
+	 * Save items to local storage.
+	 * @param {Object[]} items - Array of items to be saved.
+	 */
 	updateLocalStorage = (items) => {
 		window.localStorage.setItem('toDoListItems', JSON.stringify(items));
 	};
