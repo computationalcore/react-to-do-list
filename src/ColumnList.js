@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import If from './If';
 import './ColumnList.css';
 
 /**
@@ -8,7 +9,7 @@ import './ColumnList.css';
 const propTypes = {
 	title: PropTypes.string.isRequired,
 	addTask: PropTypes.func.isRequired,
-	//updateTask: PropTypes.func.isRequired,
+	updateTask: PropTypes.func.isRequired,
 };
 
 /**
@@ -32,19 +33,21 @@ const ColumnList = ({title, items, addTask, updateTask}) => {
 	return (
 		<div className="column-list">
 			<h3>{title}</h3>
-			<form onSubmit={addTask}>
-				<input type="text" placeholder="Create a task" />
-				<button type="submit">
-					Create
-				</button>
-			</form>
+			<If test={title === 'To Do'}>
+				<form onSubmit={addTask}>
+					<input type="text" placeholder="Create a task" />
+					<button type="submit">
+						Create
+					</button>
+				</form>
+			</If>
 			<ul className="list-items">
 				{currentItems.map(item => (
 					<li key={item.id}>
 						<input
 							type="checkbox"
 							checked={title === 'Done'}
-							onChange={updateTask}
+							onChange={(e) => updateTask(e.target, item)}
 						/>
 						<span>{item.title}</span>
 					</li>
