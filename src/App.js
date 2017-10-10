@@ -1,6 +1,11 @@
 import React, {Component} from 'react';
+import AppBar from 'material-ui/AppBar';
 import ColumnList from './ColumnList';
-import logo from './logo.svg';
+import darkBaseTheme from 'material-ui/styles/baseThemes/darkBaseTheme';
+import getMuiTheme from 'material-ui/styles/getMuiTheme';
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import TextField from 'material-ui/TextField';
+import RaisedButton from 'material-ui/RaisedButton';
 import './App.css';
 
 /**
@@ -91,25 +96,34 @@ class App extends Component {
 			{ title: 'Done', items },
 		];
 		return (
-			<div className="App">
-				<header className="App-header">
-					<img src={logo} className="App-logo" alt="logo"/>
-					<h1 className="App-title">To-Do List</h1>
-				</header>
-				<div className="App-container">
-					<div className="app-lists">
-						{columns.map((column,index) => (
-							<ColumnList
-								key={index}
-								title={column.title}
-								items={column.items}
-								addTask={this.handleAddTask}
-								updateTask={this.handleUpdateTask}
-							/>
-						))}
+			<MuiThemeProvider>
+				<div className="App">
+					<AppBar
+						title={<span style={{color: 'white'}}>To-Do List</span>}
+						showMenuIconButton={false}
+						style={{backgroundColor: 'rgb(0, 151, 167)'}}
+					/>
+					<div className="App-container">
+						<TextField
+							hintText="Type task"
+							floatingLabelText="Add Task"
+							style={{margin: 10}}
+						/>
+						<RaisedButton label="Create" />
+						<div className="app-lists">
+							{columns.map((column,index) => (
+								<ColumnList
+									key={index}
+									title={column.title}
+									items={column.items}
+									addTask={this.handleAddTask}
+									updateTask={this.handleUpdateTask}
+								/>
+							))}
+						</div>
 					</div>
 				</div>
-			</div>
+			</MuiThemeProvider>
 		);
 	}
 }
