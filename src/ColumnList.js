@@ -1,8 +1,9 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+
+import Checkbox from 'material-ui/Checkbox';
 import {List, ListItem} from 'material-ui/List';
 import MobileTearSheet from './MobileTearSheet';
-import If from './If';
 import './ColumnList.css';
 
 /**
@@ -51,28 +52,16 @@ const ColumnList = ({title, items, addTask, updateTask}) => {
 	return (
 		<div className="column-list">
 			<h3>{title}</h3>
-			<If test={title === 'To Do'}>
-				<form onSubmit={addTask}>
-					<input type="text" placeholder="Create a task" />
-					<button type="submit">
-						Create
-					</button>
-				</form>
-			</If>
-			<MobileTearSheet>
+			<MobileTearSheet style={{pading: 10}}>
 				<List>
 					{currentItems.map(item => (
-						<ListItem
-							key={item.id}
-							primaryText={item.title}
-							leftIcon={
-								<input
-									type="checkbox"
-									checked={title === 'Done'}
-									onChange={(e) => updateTask(e.target, item)}
-								/>
-							}
-						/>
+						<ListItem key={item.id}>
+							<Checkbox
+								label={item.title}
+								checked={title === 'Done'}
+								onCheck={(e) => updateTask(e.target, item)}
+							/>
+						</ListItem>
 					))}
 				</List>
 			</MobileTearSheet>

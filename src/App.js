@@ -1,8 +1,6 @@
 import React, {Component} from 'react';
 import AppBar from 'material-ui/AppBar';
 import ColumnList from './ColumnList';
-import darkBaseTheme from 'material-ui/styles/baseThemes/darkBaseTheme';
-import getMuiTheme from 'material-ui/styles/getMuiTheme';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
@@ -20,10 +18,14 @@ class App extends Component {
 		/**
 		 * @typedef {Object} ComponentState
 		 * @property {Object[]} items - All list items of the app.
+		 * @property {boolean} submitDisabled - Indicates whether the submit button is disabled.
 		 */
 
 		/** @type {ComponentState} */
-		this.state = { items: []};
+		this.state = {
+			items: [],
+			submitDisabled: true,
+		};
 	}
 
 	/**
@@ -42,12 +44,9 @@ class App extends Component {
 
 	/**
 	 * Add task to the To Do list.
-	 * @param {Object} event
 	 */
-	handleAddTask = (event) => {
-		event.preventDefault();
-		const { target = {} } = event;
-		const input = target.querySelector('input') || {};
+	handleAddTask = () => {
+		const input = this.taskInput.input || {};
 		const { value = '' } = input;
 
 		this.setState(previousState => {
@@ -58,14 +57,19 @@ class App extends Component {
 				status: 'To Do'
 			};
 			items.push(newTask);
-			return { items };
-		});
+			return {
+				items: items,
+				submitDisabled: true,
+			}
+		}, function stateUpdateComplete() {
+			this.taskInput.input.value = '';
+		}.bind(this));
 	};
 
 	/**
-	 * Update task to Done.
-	 * @param target
-	 * @param task
+	 * Update task toggling between To Do/Done status.
+	 * @param {Object} target - The checkbox element
+	 * @param {Object} task - The task to be updated
 	 */
 	handleUpdateTask = (target, task) => {
 		this.setState(previousState => {
@@ -79,6 +83,21 @@ class App extends Component {
 		}, function stateUpdateComplete() {
 			this.updateLocalStorage(this.state.items);
 		}.bind(this));
+	};
+
+	/**
+	 * @description Handle the Account Key TextField input change. It enable the submit button if field is not empty or
+	 * disable it otherwise.
+	 * @param {Object} event -
+	 * @param {value} value -
+	 */
+	handleTextFieldChange = (event, value) => {
+		if((value.length > 0) && this.state.submitDisabled){
+			this.setState({submitDisabled: false});
+		}
+		else if((value.length === 0) && !this.state.submitDisabled){
+			this.setState({submitDisabled: true});
+		}
 	};
 
 	/**
@@ -107,9 +126,16 @@ class App extends Component {
 						<TextField
 							hintText="Type task"
 							floatingLabelText="Add Task"
+							ref={(taskInput) => {
+								this.taskInput = taskInput;
+							}}
 							style={{margin: 10}}
+							onChange={this.handleTextFieldChange}
 						/>
-						<RaisedButton label="Create" />
+						<RaisedButton
+							label="Create"
+							onClick={this.handleAddTask}
+							disabled={this.state.submitDisabled} />
 						<div className="app-lists">
 							{columns.map((column,index) => (
 								<ColumnList

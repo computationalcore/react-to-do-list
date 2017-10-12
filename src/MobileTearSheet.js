@@ -21,7 +21,7 @@ const MobileTearSheet = (props) => {
 	const styles = {
 		root: {
 			margin: '0 auto',
-			maxWidth: 360,
+			maxWidth: 500,
 			width: '100%',
 		},
 		container: {
@@ -34,7 +34,7 @@ const MobileTearSheet = (props) => {
 			display: 'block',
 			position: 'relative',
 			marginTop: -10,
-			maxWidth: 360,
+			maxWidth: 500,
 		},
 	};
 
