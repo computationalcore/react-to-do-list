@@ -1,10 +1,10 @@
 import React, {Component} from 'react';
 import AppBar from 'material-ui/AppBar';
-import ColumnList from './ColumnList';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
 import './App.css';
+import ColumnList from './ColumnList';
 
 /**
  * @description Main App component.
@@ -63,6 +63,7 @@ class App extends Component {
 			}
 		}, function stateUpdateComplete() {
 			this.taskInput.input.value = '';
+			this.updateLocalStorage(this.state.items);
 		}.bind(this));
 	};
 
