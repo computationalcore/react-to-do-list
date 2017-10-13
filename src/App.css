@@ -30,7 +30,7 @@
 /* task transition animations */
 
 .task-animation-enter {
-  opacity: 0.3;
+  opacity: 0.01;
   height: 0;
 }
 
@@ -46,7 +46,7 @@
 }
 
 .task-animation-leave.task-animation-leave-active {
-  opacity: 0.3;
+  opacity: 0.01;
   height: 0;
   transition: 300ms;
 }
