@@ -26,3 +26,27 @@
   from { transform: rotate(0deg); }
   to { transform: rotate(360deg); }
 }
+
+/* task transition animations */
+
+.task-animation-enter {
+  opacity: 0.3;
+  height: 0;
+}
+
+.task-animation-enter.task-animation-enter-active {
+  opacity: 1;
+  height: 56px;
+  transition: 500ms;
+}
+
+.task-animation-leave {
+  opacity: 1;
+  height: 56px;
+}
+
+.task-animation-leave.task-animation-leave-active {
+  opacity: 0.3;
+  height: 0;
+  transition: 300ms;
+}

@@ -1,6 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-
+import {CSSTransitionGroup} from 'react-transition-group';
 import Checkbox from 'material-ui/Checkbox';
 import {List, ListItem} from 'material-ui/List';
 import MobileTearSheet from './MobileTearSheet';
@@ -54,15 +54,20 @@ const ColumnList = ({title, items, addTask, updateTask}) => {
 			<h3>{title}</h3>
 			<MobileTearSheet style={{pading: 10}}>
 				<List>
-					{currentItems.map(item => (
-						<ListItem key={item.id}>
-							<Checkbox
-								label={item.title}
-								checked={title === 'Done'}
-								onCheck={(e) => updateTask(e.target, item)}
-							/>
-						</ListItem>
-					))}
+					<CSSTransitionGroup
+						transitionName="task-animation"
+						transitionEnterTimeout={500}
+						transitionLeaveTimeout={300}>
+						{currentItems.map(item => (
+							<ListItem key={item.id}>
+								<Checkbox
+									label={item.title}
+									checked={title === 'Done'}
+									onCheck={(e) => updateTask(e.target, item)}
+								/>
+							</ListItem>
+						))}
+					</CSSTransitionGroup>
 				</List>
 			</MobileTearSheet>
 			<ul className="list-items">
