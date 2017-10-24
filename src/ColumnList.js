@@ -4,13 +4,13 @@ import {CSSTransitionGroup} from 'react-transition-group';
 import Checkbox from 'material-ui/Checkbox';
 import {List, ListItem} from 'material-ui/List';
 import MobileTearSheet from './MobileTearSheet';
+import sortBy from 'sort-by';
 import './ColumnList.css';
 
 /**
  * This object is used for type checking the props of the component.
  */
 const propTypes = {
-	title: PropTypes.string.isRequired,
 	addTask: PropTypes.func.isRequired,
 	updateTask: PropTypes.func.isRequired,
 };
@@ -47,11 +47,10 @@ const defaultProps = {
  * @returns {XML} Return the stateless component markup
  * @constructor
  */
-const ColumnList = ({title, items, addTask, updateTask}) => {
-	const currentItems = items.filter(item => item.status === title);
+const ColumnList = ({title, items, updateTask}) => {
+	const currentItems = (title !== 'All') ? items.filter(item => item.status === title).sort(sortBy('title')): items.sort(sortBy('title'));
 	return (
 		<div className="column-list">
-			<h3>{title}</h3>
 			<MobileTearSheet style={{pading: 10}}>
 				<List>
 					<CSSTransitionGroup
@@ -59,11 +58,10 @@ const ColumnList = ({title, items, addTask, updateTask}) => {
 						transitionEnterTimeout={500}
 						transitionLeaveTimeout={300}>
 						{currentItems.map(item => (
-							<ListItem key={item.id}>
+							<ListItem key={item.id} onClick={() => updateTask(item)}>
 								<Checkbox
 									label={item.title}
-									checked={title === 'Done'}
-									onCheck={(e) => updateTask(e.target, item)}
+									checked={item.status === 'Done'}
 								/>
 							</ListItem>
 						))}

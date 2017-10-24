@@ -5,6 +5,25 @@ import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
 import './App.css';
 import ColumnList from './ColumnList';
+import {Tabs, Tab} from 'material-ui/Tabs';
+import FontIcon from 'material-ui/FontIcon';
+import SwipeableViews from 'react-swipeable-views';
+
+import CheckIcon from 'material-ui/svg-icons/action/check-circle';
+import ListIcon from 'material-ui/svg-icons/action/list';
+import TodoIcon from 'material-ui/svg-icons/action/today';
+
+const styles = {
+	headline: {
+		fontSize: 24,
+		paddingTop: 16,
+		marginBottom: 12,
+		fontWeight: 400,
+	},
+	slide: {
+		padding: 10,
+	},
+};
 
 /**
  * @description Main App component.
@@ -25,6 +44,7 @@ class App extends Component {
 		this.state = {
 			items: [],
 			submitDisabled: true,
+			slideIndex: 0,
 		};
 	}
 
@@ -72,11 +92,12 @@ class App extends Component {
 	 * @param {Object} target - The checkbox element
 	 * @param {Object} task - The task to be updated
 	 */
-	handleUpdateTask = (target, task) => {
+	handleUpdateTask = (task) => {
+		console.log(task);
 		this.setState(previousState => {
 			const { items } = previousState;
 			const filteredItems = items.filter( item => item.id !== task.id);
-			task.status = target.checked ? 'Done' : 'To Do';
+			task.status = (task.status === 'To Do') ? 'Done' : 'To Do';
 			filteredItems.push(task);
 			return {
 				items: filteredItems
@@ -109,11 +130,18 @@ class App extends Component {
 		window.localStorage.setItem('toDoListItems', JSON.stringify(items));
 	};
 
+	handleChange = (value) => {
+		this.setState({
+			slideIndex: value,
+		});
+	};
+
 	render() {
 		const { items = [] } = this.state;
 		const columns = [
-			{ title: 'To Do', items },
-			{ title: 'Done', items },
+			{ title: 'To Do', items, icon: <TodoIcon />},
+			{ title: 'Done', items, icon: <CheckIcon />},
+			{ title: 'All', items, icon: <ListIcon />},
 		];
 		return (
 			<MuiThemeProvider>
@@ -137,16 +165,45 @@ class App extends Component {
 							label="Create"
 							onClick={this.handleAddTask}
 							disabled={this.state.submitDisabled} />
-						<div className="app-lists">
+						<Tabs
+							onChange={this.handleChange}
+							value={this.state.slideIndex}
+						>
 							{columns.map((column,index) => (
-								<ColumnList
+								<Tab
 									key={index}
-									title={column.title}
-									items={column.items}
-									addTask={this.handleAddTask}
-									updateTask={this.handleUpdateTask}
+									value={index}
+									icon={column.title}
+									icon={column.icon}
+									label={
+										<div>
+											{column.title} ({(column.title !== 'All') ? column.items.filter(item => item.status === column.title).length: items.length})
+										</div>
+									}
 								/>
 							))}
+						</Tabs>
+
+						<div className="app-lists">
+							<SwipeableViews
+								index={this.state.slideIndex}
+								onChangeIndex={this.handleChange}
+								style={{width: '100%'}}
+							>
+								{columns.map((column,index) => (
+									<div
+										style={styles.slide}
+										key={index}>
+										<ColumnList
+											title={column.title}
+											items={column.items}
+											addTask={this.handleAddTask}
+											updateTask={this.handleUpdateTask}
+										/>
+									</div>
+								))}
+							</SwipeableViews>
+
 						</div>
 					</div>
 				</div>
