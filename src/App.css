@@ -27,6 +27,10 @@
   to { transform: rotate(360deg); }
 }
 
+.app-lists{
+  padding-top: 228px;
+}
+
 /* task transition animations */
 
 .task-animation-enter {

@@ -149,40 +149,41 @@ class App extends Component {
 					<AppBar
 						title={<span style={{color: 'white'}}>To-Do List</span>}
 						showMenuIconButton={false}
-						style={{backgroundColor: 'rgb(0, 151, 167)'}}
+						style={{backgroundColor: 'rgb(0, 151, 167)', position: 'fixed', zIndex: 9999,}}
 					/>
 					<div className="App-container">
-						<TextField
-							hintText="Type task"
-							floatingLabelText="Add Task"
-							ref={(taskInput) => {
-								this.taskInput = taskInput;
-							}}
-							style={{margin: 10}}
-							onChange={this.handleTextFieldChange}
-						/>
-						<RaisedButton
-							label="Create"
-							onClick={this.handleAddTask}
-							disabled={this.state.submitDisabled} />
-						<Tabs
-							onChange={this.handleChange}
-							value={this.state.slideIndex}
-						>
-							{columns.map((column,index) => (
-								<Tab
-									key={index}
-									value={index}
-									icon={column.title}
-									icon={column.icon}
-									label={
-										<div>
-											{column.title} ({(column.title !== 'All') ? column.items.filter(item => item.status === column.title).length: items.length})
-										</div>
-									}
-								/>
-							))}
-						</Tabs>
+						<div style={{position: 'fixed', width: '100%', paddingTop: 64, zIndex: 8888, backgroundColor: 'white'}}>
+							<TextField
+								hintText="Type task"
+								floatingLabelText="Add Task"
+								ref={(taskInput) => {
+									this.taskInput = taskInput;
+								}}
+								style={{margin: 10}}
+								onChange={this.handleTextFieldChange}
+							/>
+							<RaisedButton
+								label="Create"
+								onClick={this.handleAddTask}
+								disabled={this.state.submitDisabled} />
+							<Tabs
+								onChange={this.handleChange}
+								value={this.state.slideIndex}
+							>
+								{columns.map((column,index) => (
+									<Tab
+										key={index}
+										value={index}
+										icon={column.icon}
+										label={
+											<div>
+												{column.title} ({(column.title !== 'All') ? column.items.filter(item => item.status === column.title).length: items.length})
+											</div>
+										}
+									/>
+								))}
+							</Tabs>
+						</div>
 
 						<div className="app-lists">
 							<SwipeableViews
