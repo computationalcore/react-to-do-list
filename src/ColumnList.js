@@ -48,7 +48,7 @@ const defaultProps = {
  * @constructor
  */
 const ColumnList = ({title, items, updateTask}) => {
-	const currentItems = (title !== 'All') ? items.filter(item => item.status === title).sort(sortBy('title')): items.sort(sortBy('title'));
+	const currentItems = (title !== 'All') ? items.filter(item => item.status === title).sort(sortBy('id')): items;
 	return (
 		<div className="column-list">
 			<MobileTearSheet style={{pading: 10}}>

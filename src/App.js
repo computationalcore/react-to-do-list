@@ -9,6 +9,7 @@ import {Tabs, Tab} from 'material-ui/Tabs';
 import FontIcon from 'material-ui/FontIcon';
 import SwipeableViews from 'react-swipeable-views';
 
+import sortBy from 'sort-by';
 import CheckIcon from 'material-ui/svg-icons/action/check-circle';
 import ListIcon from 'material-ui/svg-icons/action/list';
 import TodoIcon from 'material-ui/svg-icons/action/today';
@@ -78,7 +79,7 @@ class App extends Component {
 			};
 			items.push(newTask);
 			return {
-				items: items,
+				items: items.sort(sortBy('id')),
 				submitDisabled: true,
 			}
 		}, function stateUpdateComplete() {
@@ -100,7 +101,7 @@ class App extends Component {
 			task.status = (task.status === 'To Do') ? 'Done' : 'To Do';
 			filteredItems.push(task);
 			return {
-				items: filteredItems
+				items: filteredItems.sort(sortBy('id'))
 			}
 		}, function stateUpdateComplete() {
 			this.updateLocalStorage(this.state.items);
@@ -133,7 +134,10 @@ class App extends Component {
 	handleChange = (value) => {
 		this.setState({
 			slideIndex: value,
-		});
+		}, function stateUpdateComplete() {
+			// Fix scroll in swipe transitions
+			window.scrollTo(0, 0);
+		}.bind(this));
 	};
 
 	render() {
@@ -159,10 +163,11 @@ class App extends Component {
 								ref={(taskInput) => {
 									this.taskInput = taskInput;
 								}}
-								style={{margin: 10}}
+								style={{margin: 10, width: '60%', maxWidth: 300}}
 								onChange={this.handleTextFieldChange}
 							/>
 							<RaisedButton
+								style={{margin: 10, width: '30%', maxWidth: 56}}
 								label="Create"
 								onClick={this.handleAddTask}
 								disabled={this.state.submitDisabled} />
@@ -184,6 +189,7 @@ class App extends Component {
 								))}
 							</Tabs>
 						</div>
+						<div className="app-separator">-</div>
 
 						<div className="app-lists">
 							<SwipeableViews

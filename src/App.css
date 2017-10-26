@@ -27,8 +27,9 @@
   to { transform: rotate(360deg); }
 }
 
-.app-lists{
-  padding-top: 228px;
+.app-separator {
+  position: static;
+  height: 228px;
 }
 
 /* task transition animations */
