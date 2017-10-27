@@ -32,6 +32,19 @@
   height: 228px;
 }
 
+.enable-remove-mode {
+  position: fixed;
+  right: 25px;
+  bottom: 25px;
+}
+.remove-mode {
+  padding-top: 10px;
+}
+
+.swipeable-views {
+  padding: 10px;
+}
+
 /* task transition animations */
 
 .task-animation-enter {
@@ -51,6 +64,30 @@
 }
 
 .task-animation-leave.task-animation-leave-active {
+  opacity: 0.01;
+  height: 0;
+  transition: 300ms;
+}
+
+/* remove mode transition animations */
+
+.remove-mode-animation-enter {
+  opacity: 0.01;
+  height: 0;
+}
+
+.remove-mode-animation-enter.remove-mode-animation-enter-active {
+  opacity: 1;
+  height: 36px;
+  transition: 300ms;
+}
+
+.remove-mode-animation-leave {
+  opacity: 1;
+  height: 36px;
+}
+
+.remove-mode-animation-leave.remove-mode-animation-leave-active {
   opacity: 0.01;
   height: 0;
   transition: 300ms;

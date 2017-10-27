@@ -4,15 +4,18 @@ import {CSSTransitionGroup} from 'react-transition-group';
 import Checkbox from 'material-ui/Checkbox';
 import {List, ListItem} from 'material-ui/List';
 import MobileTearSheet from './MobileTearSheet';
-import sortBy from 'sort-by';
+import DeleteIcon from 'material-ui/svg-icons/action/delete';
 import './ColumnList.css';
 
 /**
  * This object is used for type checking the props of the component.
  */
 const propTypes = {
-	addTask: PropTypes.func.isRequired,
+	title: PropTypes.string.isRequired,
+	items: PropTypes.array,
 	updateTask: PropTypes.func.isRequired,
+	removeTask: PropTypes.func.isRequired,
+	removeMode: PropTypes.bool,
 };
 
 /**
@@ -20,13 +23,14 @@ const propTypes = {
  */
 const defaultProps = {
 	items: [],
+	removeMode: [],
 };
 
 /**
- * This callback type is called `addTask` and is displayed as a global symbol.
+ * This callback type is called `removeTask` and is displayed as a global symbol.
  *
- * @callback addTask
- * @param {Object} event - The event generate by submit the form.
+ * @callback removeTask
+ * @param {Object} event - The event generate by remove click.
  */
 
 /**
@@ -38,7 +42,7 @@ const defaultProps = {
  */
 
 /**
- * Represents the column list element.
+ * @description Represents the column list element.
  * @param {Object} props - The props that were defined by the caller of this component.
  * @param {string} props.title - The title of this column list.
  * @param {string[]} [props.items] - The items of this list.
@@ -47,8 +51,7 @@ const defaultProps = {
  * @returns {XML} Return the stateless component markup
  * @constructor
  */
-const ColumnList = ({title, items, updateTask}) => {
-	const currentItems = (title !== 'All') ? items.filter(item => item.status === title).sort(sortBy('id')): items;
+const ColumnList = (props) => {
 	return (
 		<div className="column-list">
 			<MobileTearSheet style={{pading: 10}}>
@@ -57,20 +60,24 @@ const ColumnList = ({title, items, updateTask}) => {
 						transitionName="task-animation"
 						transitionEnterTimeout={500}
 						transitionLeaveTimeout={300}>
-						{currentItems.map(item => (
-							<ListItem key={item.id} onClick={() => updateTask(item)}>
+						{props.items.map(item => (
+							<ListItem
+								key={item.id+item.title}
+								onClick={() => (props.removeMode ? props.removeTask(item) : props.updateTask(item))}
+								rightIcon={props.removeMode ? <DeleteIcon /> :
+									<DeleteIcon style={{visibility: 'hidden'}} />}
+							>
 								<Checkbox
 									label={item.title}
+									disabled={props.removeMode}
 									checked={item.status === 'Done'}
+									className={(item.status === 'Done') ? 'task-done': ''}
 								/>
 							</ListItem>
 						))}
 					</CSSTransitionGroup>
 				</List>
 			</MobileTearSheet>
-			<ul className="list-items">
-
-			</ul>
 		</div>
 	)
 };

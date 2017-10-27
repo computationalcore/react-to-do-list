@@ -1,30 +1,22 @@
 import React, {Component} from 'react';
+import sortBy from 'sort-by';
+import {CSSTransitionGroup} from 'react-transition-group';
+import SwipeableViews from 'react-swipeable-views';
 import AppBar from 'material-ui/AppBar';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
-import './App.css';
-import ColumnList from './ColumnList';
 import {Tabs, Tab} from 'material-ui/Tabs';
-import FontIcon from 'material-ui/FontIcon';
-import SwipeableViews from 'react-swipeable-views';
-
-import sortBy from 'sort-by';
+import FloatingActionButton from 'material-ui/FloatingActionButton';
 import CheckIcon from 'material-ui/svg-icons/action/check-circle';
 import ListIcon from 'material-ui/svg-icons/action/list';
 import TodoIcon from 'material-ui/svg-icons/action/today';
-
-const styles = {
-	headline: {
-		fontSize: 24,
-		paddingTop: 16,
-		marginBottom: 12,
-		fontWeight: 400,
-	},
-	slide: {
-		padding: 10,
-	},
-};
+import EditIcon from 'material-ui/svg-icons/action/delete';
+import CloseIcon from 'material-ui/svg-icons/content/delete-sweep';
+import ColumnList from './ColumnList';
+import ConfirmDialog from './ConfirmDialog';
+import If from './If';
+import './App.css';
 
 /**
  * @description Main App component.
@@ -38,42 +30,54 @@ class App extends Component {
 		/**
 		 * @typedef {Object} ComponentState
 		 * @property {Object[]} items - All list items of the app.
-		 * @property {boolean} submitDisabled - Indicates whether the submit button is disabled.
+		 * @property {boolean} submitDisabled - Indicates whether submit is disabled.
+		 * @property {number} slideIndex - The index of the tab.
+		 * @property {boolean} dialogOpen - Visibility of the clear shelf dialog.
+		 * @property {boolean} removeMode - Indicates if the remove mode is active.
 		 */
 
 		/** @type {ComponentState} */
 		this.state = {
 			items: [],
+			taskIdCounter: 0,
 			submitDisabled: true,
 			slideIndex: 0,
+			dialogOpen: false,
+			removeMode: false,
 		};
 	}
 
 	/**
 	 * Lifecycle event handler called just after the App loads into the DOM.
-	 * Get any save items from the local storage and render it.
+	 * Get any saved items and taskIdCounter from the local storage and setup state with it.
 	 */
 	componentWillMount() {
 		const toDoListItems = window.localStorage.getItem('toDoListItems') || '[]';
+		const taskIdCounter = window.localStorage.getItem('taskIdCounter') || 0;
 		//Get
 		this.setState(
 			{
-				items: JSON.parse(toDoListItems)
+				items: JSON.parse(toDoListItems),
+				taskIdCounter: taskIdCounter,
 			}
 		);
 	}
 
 	/**
-	 * Add task to the To Do list.
+	 * @description Add task to the To Do list.
 	 */
-	handleAddTask = () => {
+	addTask = () => {
 		const input = this.taskInput.input || {};
 		const { value = '' } = input;
 
+		if (value === '') return;
+
 		this.setState(previousState => {
 			const { items = [] } = previousState;
+			const { taskIdCounter = 0 } = previousState;
+			const taskId = taskIdCounter+1;
 			const newTask = {
-				id: items.length + 1,
+				id: taskId,
 				title: value,
 				status: 'To Do'
 			};
@@ -81,20 +85,20 @@ class App extends Component {
 			return {
 				items: items.sort(sortBy('id')),
 				submitDisabled: true,
+				taskIdCounter: taskId,
 			}
 		}, function stateUpdateComplete() {
 			this.taskInput.input.value = '';
-			this.updateLocalStorage(this.state.items);
+			this.updateLocalStorageItems(this.state.items);
+			this.updateTaskCounter(this.state.taskIdCounter);
 		}.bind(this));
 	};
 
 	/**
-	 * Update task toggling between To Do/Done status.
-	 * @param {Object} target - The checkbox element
+	 * @description Update task toggling between To Do/Done status.
 	 * @param {Object} task - The task to be updated
 	 */
 	handleUpdateTask = (task) => {
-		console.log(task);
 		this.setState(previousState => {
 			const { items } = previousState;
 			const filteredItems = items.filter( item => item.id !== task.id);
@@ -104,7 +108,24 @@ class App extends Component {
 				items: filteredItems.sort(sortBy('id'))
 			}
 		}, function stateUpdateComplete() {
-			this.updateLocalStorage(this.state.items);
+			this.updateLocalStorageItems(this.state.items);
+		}.bind(this));
+	};
+
+	/**
+	 * Update task toggling between To Do/Done status.
+	 * @param {Object} target - The checkbox element
+	 * @param {Object} task - The task to be updated
+	 */
+	handleRemoveTask = (task) => {
+		this.setState(previousState => {
+			const { items } = previousState;
+			const filteredItems = items.filter( item => item.id !== task.id);
+			return {
+				items: filteredItems.sort(sortBy('id'))
+			}
+		}, function stateUpdateComplete() {
+			this.updateLocalStorageItems(this.state.items);
 		}.bind(this));
 	};
 
@@ -124,32 +145,107 @@ class App extends Component {
 	};
 
 	/**
-	 * Save items to local storage.
-	 * @param {Object[]} items - Array of items to be saved.
+	 * @description Save items to local storage.
+	 * @param {Object[]} items - Array of items/tasks to be saved.
 	 */
-	updateLocalStorage = (items) => {
+	updateLocalStorageItems = (items) => {
 		window.localStorage.setItem('toDoListItems', JSON.stringify(items));
 	};
 
+	/**
+	 * @description Save current taskId to local storage.
+	 * @param {Object[]} items - Array of items/tasks to be saved.
+	 */
+	updateTaskCounter = (taskCounter) => {
+		window.localStorage.setItem('taskIdCounter', taskCounter);
+	};
+
+	/**
+	 * @description Handle the tab change.
+	 * @param {number} value - The index of the Tab
+	 */
 	handleChange = (value) => {
 		this.setState({
 			slideIndex: value,
 		}, function stateUpdateComplete() {
 			// Fix scroll in swipe transitions
 			window.scrollTo(0, 0);
-		}.bind(this));
+		});
 	};
 
+
+	/**
+	 * @description Enable the select books mode.
+	 */
+	enableRemoveMode = () => {
+		if (!this.state.removeMode) {
+			this.setState({removeMode: true});
+		}
+	};
+
+	/**
+	 * @description Disable the select books mode.
+	 */
+	disableRemoveMode = () => {
+		if (this.state.removeMode) {
+			this.setState({removeMode: false});
+		}
+	};
+
+	/**
+	 * @description Remove all tasks from the App.
+	 */
+	clearTasks = () => {
+		this.handleDialogClose();
+		this.setState({removeMode: false, items: []}, function stateUpdateComplete() {
+			// Update local storage
+			this.updateLocalStorageItems(this.state.items);
+		});
+	};
+
+	/**
+	 * @description Open the clear tasks dialog.
+	 */
+	handleDialogOpen = () => {
+		this.setState({dialogOpen: true});
+	};
+
+	/**
+	 * @description Close the clear task dialog.
+	 */
+	handleDialogClose = () => {
+		this.setState({dialogOpen: false});
+	};
+
+	keyPress = (e) => {
+		// If Enter key
+		if(e.keyCode === 13){
+			// Call method to add the task if not empty
+			this.addTask();
+			// put the login here
+		}
+	};
+
+
+
 	render() {
-		const { items = [] } = this.state;
+		const { items = [] }  = this.state;
 		const columns = [
-			{ title: 'To Do', items, icon: <TodoIcon />},
-			{ title: 'Done', items, icon: <CheckIcon />},
+			{ title: 'To Do', items: items.filter( item => item.status === 'To Do'), icon: <TodoIcon />},
+			{ title: 'Done', items: items.filter( item => item.status === 'Done'), icon: <CheckIcon />},
 			{ title: 'All', items, icon: <ListIcon />},
 		];
 		return (
 			<MuiThemeProvider>
 				<div className="App">
+					{/* Clear Tasks Confirmation Dialog */}
+					<ConfirmDialog
+						title="Clear All Tasks"
+						message={'Are you sure you want to remove all tasks from the App?'}
+						onCancel={this.handleDialogClose}
+						onConfirm={this.clearTasks}
+						open={this.state.dialogOpen}
+					/>
 					<AppBar
 						title={<span style={{color: 'white'}}>To-Do List</span>}
 						showMenuIconButton={false}
@@ -163,13 +259,15 @@ class App extends Component {
 								ref={(taskInput) => {
 									this.taskInput = taskInput;
 								}}
+								disabled={this.state.removeMode}
 								style={{margin: 10, width: '60%', maxWidth: 300}}
 								onChange={this.handleTextFieldChange}
+								onKeyDown={this.keyPress}
 							/>
 							<RaisedButton
 								style={{margin: 10, width: '30%', maxWidth: 56}}
 								label="Create"
-								onClick={this.handleAddTask}
+								onClick={this.addTask}
 								disabled={this.state.submitDisabled} />
 							<Tabs
 								onChange={this.handleChange}
@@ -190,28 +288,53 @@ class App extends Component {
 							</Tabs>
 						</div>
 						<div className="app-separator">-</div>
-
-						<div className="app-lists">
-							<SwipeableViews
-								index={this.state.slideIndex}
-								onChangeIndex={this.handleChange}
-								style={{width: '100%'}}
-							>
-								{columns.map((column,index) => (
-									<div
-										style={styles.slide}
-										key={index}>
-										<ColumnList
-											title={column.title}
-											items={column.items}
-											addTask={this.handleAddTask}
-											updateTask={this.handleUpdateTask}
-										/>
-									</div>
-								))}
-							</SwipeableViews>
-
-						</div>
+						<CSSTransitionGroup
+							transitionName="remove-mode-animation"
+							transitionEnterTimeout={300}
+							transitionLeaveTimeout={300}>
+							{this.state.removeMode &&
+								<div className="remove-mode">
+									<RaisedButton
+									label="Delete All Tasks"
+									secondary={true}
+									onClick={this.handleDialogOpen}
+									/>
+								</div>
+							}
+							<div className="app-lists">
+								<SwipeableViews
+									index={this.state.slideIndex}
+									onChangeIndex={this.handleChange}
+									style={{width: '100%'}}
+								>
+									{columns.map((column,index) => (
+										<div
+											className="swipeable-views"
+											key={index}>
+											<ColumnList
+												title={column.title}
+												items={column.items}
+												updateTask={this.handleUpdateTask}
+												removeTask={this.handleRemoveTask}
+												removeMode={this.state.removeMode}
+											/>
+										</div>
+									))}
+								</SwipeableViews>
+							</div>
+						</CSSTransitionGroup>
+					</div>
+					<div className="enable-remove-mode">
+						<If test={!this.state.removeMode}>
+							<FloatingActionButton onClick={this.enableRemoveMode}>
+								<EditIcon />
+							</FloatingActionButton>
+						</If>
+						<If test={this.state.removeMode}>
+							<FloatingActionButton secondary={true} onClick={this.disableRemoveMode}>
+								<CloseIcon />
+							</FloatingActionButton>
+						</If>
 					</div>
 				</div>
 			</MuiThemeProvider>
