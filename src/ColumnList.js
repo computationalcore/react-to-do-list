@@ -45,9 +45,10 @@ const defaultProps = {
  * @description Represents the column list element.
  * @param {Object} props - The props that were defined by the caller of this component.
  * @param {string} props.title - The title of this column list.
- * @param {string[]} [props.items] - The items of this list.
- * @param {addTask} props.addTask - Callback executed when user submit item.
+ * @param {Object[]} [props.items=[]] - The array of tasks/items of the list.
+ * @param {removeTask} props.removeTask - Callback executed when user click to remove the task.
  * @param {updateTask} props.updateTask - Callback executed when when user the done checkbox.
+ * @param {boolean} [props.removeMode=false] - Indicates whether the app is in remove mode.
  * @returns {XML} Return the stateless component markup
  * @constructor
  */

@@ -30,9 +30,10 @@ class App extends Component {
 		/**
 		 * @typedef {Object} ComponentState
 		 * @property {Object[]} items - All list items of the app.
+		 * @property {number} taskIdCounter - The index of the last task added.
 		 * @property {boolean} submitDisabled - Indicates whether submit is disabled.
-		 * @property {number} slideIndex - The index of the tab.
-		 * @property {boolean} dialogOpen - Visibility of the clear shelf dialog.
+		 * @property {number} slideIndex - The index of the tab component.
+		 * @property {boolean} dialogOpen - Visibility of the clear tasks dialog.
 		 * @property {boolean} removeMode - Indicates if the remove mode is active.
 		 */
 
@@ -113,9 +114,8 @@ class App extends Component {
 	};
 
 	/**
-	 * Update task toggling between To Do/Done status.
-	 * @param {Object} target - The checkbox element
-	 * @param {Object} task - The task to be updated
+	 * @description Remove task.
+	 * @param {Object} task - The task to be removed.
 	 */
 	handleRemoveTask = (task) => {
 		this.setState(previousState => {
@@ -132,8 +132,8 @@ class App extends Component {
 	/**
 	 * @description Handle the Account Key TextField input change. It enable the submit button if field is not empty or
 	 * disable it otherwise.
-	 * @param {Object} event -
-	 * @param {value} value -
+	 * @param {Object} event - On click event object
+	 * @param {value} value - The task description
 	 */
 	handleTextFieldChange = (event, value) => {
 		if((value.length > 0) && this.state.submitDisabled){
@@ -153,8 +153,8 @@ class App extends Component {
 	};
 
 	/**
-	 * @description Save current taskId to local storage.
-	 * @param {Object[]} items - Array of items/tasks to be saved.
+	 * @description Update current taskId into local storage.
+	 * @param {number} taskCounter - Id of the task to be saved at local storage.
 	 */
 	updateTaskCounter = (taskCounter) => {
 		window.localStorage.setItem('taskIdCounter', taskCounter);
@@ -162,7 +162,7 @@ class App extends Component {
 
 	/**
 	 * @description Handle the tab change.
-	 * @param {number} value - The index of the Tab
+	 * @param {number} value - The index of the Tab.
 	 */
 	handleChange = (value) => {
 		this.setState({
@@ -175,7 +175,7 @@ class App extends Component {
 
 
 	/**
-	 * @description Enable the select books mode.
+	 * @description Enable the remove task mode.
 	 */
 	enableRemoveMode = () => {
 		if (!this.state.removeMode) {
@@ -184,7 +184,7 @@ class App extends Component {
 	};
 
 	/**
-	 * @description Disable the select books mode.
+	 * @description Disable the remove task mode.
 	 */
 	disableRemoveMode = () => {
 		if (this.state.removeMode) {
@@ -217,6 +217,10 @@ class App extends Component {
 		this.setState({dialogOpen: false});
 	};
 
+	/**
+	 * @description Handle the enter key pressed under the add task input.
+	 * @param {Object} e - Key press event
+	 */
 	keyPress = (e) => {
 		// If Enter key
 		if(e.keyCode === 13){
@@ -225,8 +229,6 @@ class App extends Component {
 			// put the login here
 		}
 	};
-
-
 
 	render() {
 		const { items = [] }  = this.state;
