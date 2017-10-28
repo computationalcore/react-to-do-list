@@ -1,8 +1,13 @@
 # React To-Do List
 
-The repository contains my implementation of the To-Do list app inpired by the first live coding of the [React 
-Nanodegree Program](https://udacity.com/course/react-nanodegree--nd019). 
-This is a simple To-Do list app done in React.
+This is a simple To-Do list app done with React. All tasks are saved into browser's local storage only. The app development
+was inspired by the first brazilian live coding of the [React Nanodegree Program](https://udacity.com/course/react-nanodegree--nd019). 
+
+<img src="https://raw.githubusercontent.com/computationalcore/react-to-do-list/gh-pages/to-do-list.gif" alt="Todo List" style="width: 320px; height: 582px"/>
+
+## Demo
+
+[computationalcore.github.io/react-to-do-list](https://computationalcore.github.io/react-to-do-list)
 
 ## Getting Started
 
@@ -15,7 +20,7 @@ The project can be built with npm or yarn, so choose one of the approach bellow 
 have any installed on your system. 
 
 * npm is distributed with Node.js which means that when you download Node.js, 
-you automatically get npm installed on your computer. [Download Node.js](https://github.com/facebookincubator/create-react-app)
+you automatically get npm installed on your computer. [Download Node.js](https://nodejs.org/en/download/)
 
 or
 
@@ -44,6 +49,16 @@ yarn
 yarn install
 yarn start
 ```
+
+## Versions
+
+v1.0 
+* Default project implementation 
+ 
+v1.1 
+* Change to material UI based interface
+* Task transitions animations
+* Remove tasks capabilities
 
 ## Authors
 Vin Busquet
