@@ -1,0 +1,38 @@
+{
+  "name": "to-do-list",
+  "version": "1.1.0",
+  "bugs": {
+    "url": "https://github.com/computationalcore/react-to-do-list/issues"
+  },
+  "homepage": "https://computationalcore.github.com/react-to-do-list",
+  "dependencies": {
+    "material-ui": "^0.19.4",
+    "prop-types": "^15.5.8",
+    "react": "^15.6.1",
+    "react-dom": "^15.6.1",
+    "react-scripts": "1.0.14",
+    "react-swipeable-views": "^0.12.10",
+    "react-transition-group": "^1.2.1",
+    "react-router-dom": "^4.2.2",
+    "sort-by": "^1.2.0"
+  },
+  "devDependencies": {
+    "babel-core": "^6.26.0",
+    "babel-eslint": "^7.2.3",
+    "babel-loader": "^7.1.2",
+    "babel-preset-env": "^1.6.0",
+    "babel-preset-react": "^6.24.1",
+    "babel-preset-stage-1": "^6.24.1",
+    "eslint": "^3.19.0",
+    "eslint-config-airbnb": "^14.1.0",
+    "eslint-plugin-import": "^2.2.0",
+    "eslint-plugin-jsx-a11y": "^4.0.0",
+    "eslint-plugin-react": "^6.10.3",
+    "webpack": "^3.6.0",
+    "webpack-dev-server": "^2.8.2"
+  },
+  "scripts": {
+    "start": "webpack-dev-server --devtool eval-source-map --history-api-fallback --open",
+    "build": "webpack -p"
+  }
+}
